@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.cli.jvm.main
+
 plugins {
   alias(libs.plugins.android.application)
   alias(libs.plugins.jetbrains.kotlin.android)
@@ -44,6 +46,11 @@ android {
       excludes += "/META-INF/{AL2.0,LGPL2.1}"
     }
   }
+  sourceSets {
+    getByName("main") {
+      resources.srcDirs("app/src/main/assets")
+    }
+  }
 }
 
 dependencies {
@@ -56,7 +63,16 @@ dependencies {
   implementation(libs.androidx.ui.graphics)
   implementation(libs.androidx.ui.tooling.preview)
   implementation(libs.androidx.material3)
+
   implementation(libs.androidx.navigation.compose)
+  implementation(libs.androidx.lifecycle.viewmodel.compose)
+  implementation(libs.androidx.lifecycle.livedata.ktx)
+
+  implementation(libs.retrofit)
+  implementation(libs.converter.gson)
+  implementation(libs.logging.interceptor)
+  implementation(libs.androidx.runtime.livedata)
+  implementation(libs.play.services.location)
 
   testImplementation(libs.junit)
   androidTestImplementation(libs.androidx.junit)
