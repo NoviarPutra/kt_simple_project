@@ -1,6 +1,5 @@
 package com.project.location.ui.views
 
-import android.app.Application
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
@@ -8,7 +7,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.navigation.compose.*
-import com.project.location.viewmodel.TrackingViewModel
 import com.project.utils.getInitialScreen
 
 @Composable

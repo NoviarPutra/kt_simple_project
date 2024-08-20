@@ -3,7 +3,6 @@ package com.project.location.viewmodel
 import android.Manifest
 import android.app.Application
 import android.content.Context
-import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Address
 import android.location.Geocoder
@@ -14,7 +13,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
-import com.project.location.service.TrackingService
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -67,60 +65,6 @@ class TrackingViewModel(application: Application) : AndroidViewModel(application
     } catch (e: Exception) {
       _address.value = "Error getting address"
     }
-  }
-
-//  @Composable
-//  private fun sendLocationData(location: Location) {
-//    val userId = AppUtils().getUser()?.id ?: ""
-//    val uplinerId = AppUtils().getUser()?.uplinerId ?: ""
-//
-//    val locationRequest = LocationRequest(
-//      userId = userId,
-//      uplinerId = uplinerId,
-//      latitude = location.latitude.toString(),
-//      longitude = location.longitude.toString(),
-//      location = address.toString(),
-//      platform = Build.BRAND,
-//      deviceModel = Build.MODEL,
-//      deviceOs = Build.VERSION.RELEASE
-//    )
-//
-//    val apiService = ApiPro2Client.instance.create(LocationApiService::class.java)
-//    apiService.sendLocationData(locationRequest)
-//      .enqueue(object : Callback<SendLocationResponse> {
-//        override fun onResponse(call: Call<SendLocationResponse>, response: Response<SendLocationResponse>) {
-//          if (response.isSuccessful) {
-//            val responseBody = response.body()
-//            if (responseBody?.success == true) {
-//              // Handle success
-//              println("Success: ${responseBody.message}")
-//            } else {
-//              // Handle failure if success is false
-//              println("Failure: ${responseBody?.message}")
-//            }
-//          } else {
-//            // Handle the case where the response is not successful
-//            println("Error: ${response.errorBody()?.string()}")
-//          }
-//        }
-//
-//        override fun onFailure(call: Call<SendLocationResponse>, t: Throwable) {
-//          // Handle failure
-//          println("Error sending location data: ${t.message}")
-//        }
-//      })
-//  }
-
-  fun startTrackingService() {
-    val context = getApplication<Application>().applicationContext
-    val intent = Intent(context, TrackingService::class.java)
-    ContextCompat.startForegroundService(context, intent)
-  }
-
-  fun stopTrackingService() {
-    val context = getApplication<Application>().applicationContext
-    val intent = Intent(context, TrackingService::class.java)
-    context.stopService(intent)
   }
 
 

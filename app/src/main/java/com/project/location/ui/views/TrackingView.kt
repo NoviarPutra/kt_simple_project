@@ -3,6 +3,7 @@ package com.project.location.ui.views
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.os.Build
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -55,14 +56,29 @@ fun TrackingView(navController: NavController) {
   val location by viewModels.location.observeAsState()
   val address by viewModels.address.observeAsState()
   val permissionGranted = remember { mutableStateOf(false) }
+  val notificationPermissionGranted = remember { mutableStateOf(false) }
   val isTracking = remember { mutableStateOf(false) }
 
+  val notificationLauncher = rememberLauncherForActivityResult(
+    contract = ActivityResultContracts.RequestPermission()
+  ) { isGranted ->
+    notificationPermissionGranted.value = isGranted
+    if (!isGranted) {
+      Toast.makeText(context, "Notification permission is recommended", Toast.LENGTH_LONG).show()
+    }
+  }
+
+  // Launcher for requesting location permission
   val launcher = rememberLauncherForActivityResult(
     contract = ActivityResultContracts.RequestPermission()
   ) { isGranted ->
     permissionGranted.value = isGranted
     if (isGranted) {
       viewModels.getLastLocation()
+      // After granting location permission, request notification permission
+      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        notificationLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+      }
     } else {
       Toast.makeText(context, "Location permission is required", Toast.LENGTH_LONG).show()
     }
@@ -73,6 +89,7 @@ fun TrackingView(navController: NavController) {
   val user = AppUtils(context).getUser()
 
   LaunchedEffect(Unit) {
+    // Request Location Permission
     if (ContextCompat.checkSelfPermission(
         context,
         Manifest.permission.ACCESS_FINE_LOCATION
@@ -80,6 +97,10 @@ fun TrackingView(navController: NavController) {
     ) {
       permissionGranted.value = true
       viewModel.getLastLocation()
+      // Immediately request notification permission after location permission is granted
+      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        notificationLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+      }
     } else {
       launcher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
     }

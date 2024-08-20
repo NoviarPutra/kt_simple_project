@@ -61,7 +61,6 @@ class TrackingService : Service() {
   }
 
   override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-    startAsForegroundService()
     startLocationUpdates()
     coroutineScope.launch {
       withContext(Dispatchers.Main) {
@@ -78,6 +77,7 @@ class TrackingService : Service() {
   override fun onCreate() {
     super.onCreate()
     setupLocationUpdates()
+    startAsForegroundService()
     startServiceRunningTicker()
   }
 
@@ -92,6 +92,9 @@ class TrackingService : Service() {
     NotificationsHelper.createNotificationChannel(this)
 
     val notification = NotificationsHelper.buildNotification(this)
+    startForeground(1, notification) // Start as foreground service with notification
+
+    // If API level is above Q, make sure to start as a location service
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
       ServiceCompat.startForeground(
         this,
@@ -104,9 +107,6 @@ class TrackingService : Service() {
     }
   }
 
-  fun stopForegroundService() {
-    stopSelf()
-  }
 
   private fun setupLocationUpdates() {
     fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
